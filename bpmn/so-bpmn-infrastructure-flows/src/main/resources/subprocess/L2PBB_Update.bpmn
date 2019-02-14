@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" id="Definitions_0x67s7e" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="1.16.0">
+  <bpmn:process id="L2PBB_Update" name="L2PBB_Update" isExecutable="true">
+    <bpmn:startEvent id="StartEvent_1" name="Create Update Service">
+      <bpmn:outgoing>SequenceFlow_06pif0b</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:endEvent id="EndEvent_19wva9g" name="End Update Service">
+      <bpmn:incoming>SequenceFlow_1osg1rs</bpmn:incoming>
+      <bpmn:incoming>SequenceFlow_16l7wnw</bpmn:incoming>
+      <bpmn:incoming>SequenceFlow_1ybtdl8</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:serviceTask id="ServiceTask_13urth3" name="A&#38;AI Inventory Check_UPDATE" camunda:class="org.openecomp.mso.bpmn.infrastructure.L2PBB.update.InventoryCheck_Update">
+      <bpmn:incoming>SequenceFlow_06pif0b</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_0dtbmgu</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:serviceTask id="ServiceTask_1b94krm" name="SDNC Update Device Configuration" camunda:class="org.openecomp.mso.bpmn.infrastructure.L2PBB.update.SDNC_Update">
+      <bpmn:incoming>SequenceFlow_13bsnvv</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_005er3m</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:serviceTask id="ServiceTask_0t0raiq" name="UpdateA&#38;AI_update" camunda:class="org.openecomp.mso.bpmn.infrastructure.L2PBB.update.AAIUpdate">
+      <bpmn:incoming>SequenceFlow_0g7jatz</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_1osg1rs</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:sequenceFlow id="SequenceFlow_005er3m" sourceRef="ServiceTask_1b94krm" targetRef="ExclusiveGateway_0h1wdmw" />
+    <bpmn:sequenceFlow id="SequenceFlow_06pif0b" sourceRef="StartEvent_1" targetRef="ServiceTask_13urth3" />
+    <bpmn:sequenceFlow id="SequenceFlow_0dtbmgu" sourceRef="ServiceTask_13urth3" targetRef="ExclusiveGateway_1os1csb" />
+    <bpmn:sequenceFlow id="SequenceFlow_1osg1rs" sourceRef="ServiceTask_0t0raiq" targetRef="EndEvent_19wva9g" />
+    <bpmn:exclusiveGateway id="ExclusiveGateway_1os1csb" name="A&#38;AI Query Success?">
+      <bpmn:incoming>SequenceFlow_0dtbmgu</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_13bsnvv</bpmn:outgoing>
+      <bpmn:outgoing>SequenceFlow_1ybtdl8</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:sequenceFlow id="SequenceFlow_13bsnvv" name="Yes" sourceRef="ExclusiveGateway_1os1csb" targetRef="ServiceTask_1b94krm">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">#{execution.getVariable("QueryResult") == "Yes"}</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:exclusiveGateway id="ExclusiveGateway_0h1wdmw" name="Device Configuraion Update Success?">
+      <bpmn:incoming>SequenceFlow_005er3m</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_0g7jatz</bpmn:outgoing>
+      <bpmn:outgoing>SequenceFlow_16l7wnw</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:sequenceFlow id="SequenceFlow_0g7jatz" name="Yes" sourceRef="ExclusiveGateway_0h1wdmw" targetRef="ServiceTask_0t0raiq">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">#{execution.getVariable("SDNC_Success") == "Success"}</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="SequenceFlow_16l7wnw" name="No" sourceRef="ExclusiveGateway_0h1wdmw" targetRef="EndEvent_19wva9g">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">#{execution.getVariable("SDNC_Success") == "Fail"}</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="SequenceFlow_1ybtdl8" name="No" sourceRef="ExclusiveGateway_1os1csb" targetRef="EndEvent_19wva9g">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">#{execution.getVariable("QueryResult") == "No"}</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+  </bpmn:process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="L2PBB_Update">
+      <bpmndi:BPMNShape id="_BPMNShape_StartEvent_2" bpmnElement="StartEvent_1">
+        <dc:Bounds x="259" y="280" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="241" y="323" width="72" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="EndEvent_19wva9g_di" bpmnElement="EndEvent_19wva9g">
+        <dc:Bounds x="877" y="467" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="866" y="510" width="59" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="ServiceTask_13urth3_di" bpmnElement="ServiceTask_13urth3">
+        <dc:Bounds x="369" y="258" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="ServiceTask_1b94krm_di" bpmnElement="ServiceTask_1b94krm">
+        <dc:Bounds x="621" y="258" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="ServiceTask_0t0raiq_di" bpmnElement="ServiceTask_0t0raiq">
+        <dc:Bounds x="845" y="258" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_005er3m_di" bpmnElement="SequenceFlow_005er3m">
+        <di:waypoint x="721" y="298" />
+        <di:waypoint x="753" y="298" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_06pif0b_di" bpmnElement="SequenceFlow_06pif0b">
+        <di:waypoint x="295" y="298" />
+        <di:waypoint x="369" y="298" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_0dtbmgu_di" bpmnElement="SequenceFlow_0dtbmgu">
+        <di:waypoint x="469" y="298" />
+        <di:waypoint x="524" y="298" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_1osg1rs_di" bpmnElement="SequenceFlow_1osg1rs">
+        <di:waypoint x="895" y="338" />
+        <di:waypoint x="895" y="467" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="ExclusiveGateway_1os1csb_di" bpmnElement="ExclusiveGateway_1os1csb" isMarkerVisible="true">
+        <dc:Bounds x="524" y="273" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="520" y="238" width="58" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_13bsnvv_di" bpmnElement="SequenceFlow_13bsnvv">
+        <di:waypoint x="574" y="298" />
+        <di:waypoint x="621" y="298" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="589" y="280" width="18" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="ExclusiveGateway_0h1wdmw_di" bpmnElement="ExclusiveGateway_0h1wdmw" isMarkerVisible="true">
+        <dc:Bounds x="753" y="273" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="734" y="218" width="87" height="40" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_0g7jatz_di" bpmnElement="SequenceFlow_0g7jatz">
+        <di:waypoint x="803" y="298" />
+        <di:waypoint x="845" y="298" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="811" y="274" width="18" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_16l7wnw_di" bpmnElement="SequenceFlow_16l7wnw">
+        <di:waypoint x="781" y="320" />
+        <di:waypoint x="795" y="438" />
+        <di:waypoint x="879" y="477" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="809" y="409" width="15" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_1ybtdl8_di" bpmnElement="SequenceFlow_1ybtdl8">
+        <di:waypoint x="549" y="323" />
+        <di:waypoint x="549" y="485" />
+        <di:waypoint x="877" y="485" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="562" y="407" width="15" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>

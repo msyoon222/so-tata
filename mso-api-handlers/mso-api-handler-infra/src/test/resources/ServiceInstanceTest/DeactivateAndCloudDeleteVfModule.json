@@ -1,0 +1,20 @@
+{
+  "requestDetails": {
+      "modelInfo": {
+          "modelType": "vfModule",
+          "modelInvariantId":"78ca26d0-246d-11e7-93ae-92361f002671",
+          "modelVersion": "2"
+      },
+      "cloudConfiguration": {
+          "lcpCloudRegionId": "mdt1",
+          "tenantId": "88a6ca3ee0394ade9403f075db23167e"
+      },
+      "requestInfo": {
+          "source": "VID",
+          "requestorId": "xxxxxx"
+      }
+  }
+}
+
+	
+	

@@ -1,0 +1,16 @@
+{
+"requestDetails": {
+"cloudConfiguration": {
+"lcpCloudRegionId": "mdt1",
+"tenantId": "fba1bd1e195a404cacb9ce17a9b2b421"
+},
+"requestInfo": {
+"source": "VID",
+"requestorId": "xxxxxx"
+},
+"requestParameters": {
+"payload":
+"{\"existing_software_version\": \"3.1\",\"new_software_version\": \"3.2\", \"operations_timeout\": \"3600\"}"
+}
+}
+}

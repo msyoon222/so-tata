@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" id="Definitions_1vii8qr" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="1.16.0">
+  <bpmn:process id="L2PBB_Delete" name="L2PBB_Delete" isExecutable="true">
+    <bpmn:startEvent id="StartEvent_1" name="Start Delete Service">
+      <bpmn:outgoing>SequenceFlow_15uy8fb</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:endEvent id="EndEvent_1dti2ck" name="End Delete Service">
+      <bpmn:incoming>SequenceFlow_1l25gc1</bpmn:incoming>
+      <bpmn:incoming>SequenceFlow_1fkr2s1</bpmn:incoming>
+      <bpmn:incoming>SequenceFlow_1xc5jqx</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:serviceTask id="ServiceTask_1ctgkdr" name="A&#38;AI Inventory Check_DELETE" camunda:class="org.openecomp.mso.bpmn.infrastructure.L2PBB.deletion.InventoryCheck_Delete">
+      <bpmn:incoming>SequenceFlow_15uy8fb</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_0pjz61x</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:serviceTask id="ServiceTask_1yxbpam" name="SDNC Delete Device Configuration" camunda:class="org.openecomp.mso.bpmn.infrastructure.L2PBB.deletion.SDNC_Delete">
+      <bpmn:incoming>SequenceFlow_009qp02</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_0i5fvla</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:serviceTask id="ServiceTask_08v7u37" name="Delete A&#38;AI Inventory" camunda:class="org.openecomp.mso.bpmn.infrastructure.L2PBB.deletion.AAIDelete">
+      <bpmn:incoming>SequenceFlow_1xiru5u</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_1l25gc1</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:sequenceFlow id="SequenceFlow_0pjz61x" sourceRef="ServiceTask_1ctgkdr" targetRef="ExclusiveGateway_1kfvlhx" />
+    <bpmn:sequenceFlow id="SequenceFlow_1l25gc1" sourceRef="ServiceTask_08v7u37" targetRef="EndEvent_1dti2ck" />
+    <bpmn:sequenceFlow id="SequenceFlow_0i5fvla" sourceRef="ServiceTask_1yxbpam" targetRef="ExclusiveGateway_0o6rnht" />
+    <bpmn:sequenceFlow id="SequenceFlow_15uy8fb" sourceRef="StartEvent_1" targetRef="ServiceTask_1ctgkdr" />
+    <bpmn:exclusiveGateway id="ExclusiveGateway_0o6rnht" name="Deletion Device Configuration Success?">
+      <bpmn:incoming>SequenceFlow_0i5fvla</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_1dkp04u</bpmn:outgoing>
+      <bpmn:outgoing>SequenceFlow_1xiru5u</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:exclusiveGateway id="ExclusiveGateway_1kfvlhx" name="A&#38;AI Query Success?">
+      <bpmn:incoming>SequenceFlow_0pjz61x</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_009qp02</bpmn:outgoing>
+      <bpmn:outgoing>SequenceFlow_1fkr2s1</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:sequenceFlow id="SequenceFlow_009qp02" name="Yes" sourceRef="ExclusiveGateway_1kfvlhx" targetRef="ServiceTask_1yxbpam">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">#{execution.getVariable("QueryResult") == "Yes"}</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="SequenceFlow_1fkr2s1" name="No" sourceRef="ExclusiveGateway_1kfvlhx" targetRef="EndEvent_1dti2ck">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">#{execution.getVariable("QueryResult") == "No"}</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="SequenceFlow_1dkp04u" name="No" sourceRef="ExclusiveGateway_0o6rnht" targetRef="Task_1qnusb7">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">#{execution.getVariable("SDNC_Success") == "Fail"}</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="SequenceFlow_1xc5jqx" sourceRef="Task_1qnusb7" targetRef="EndEvent_1dti2ck" />
+    <bpmn:serviceTask id="Task_1qnusb7" name="Device Rollback" camunda:class="org.openecomp.mso.bpmn.infrastructure.L2PBB.deletion.Device_Rollback_Delete">
+      <bpmn:incoming>SequenceFlow_1dkp04u</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_1xc5jqx</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:sequenceFlow id="SequenceFlow_1xiru5u" name="Yes" sourceRef="ExclusiveGateway_0o6rnht" targetRef="ServiceTask_08v7u37">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">#{execution.getVariable("SDNC_Success") == "Success"}</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+  </bpmn:process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="L2PBB_Delete">
+      <bpmndi:BPMNShape id="_BPMNShape_StartEvent_2" bpmnElement="StartEvent_1">
+        <dc:Bounds x="271" y="350" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="260" y="393" width="59" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="EndEvent_1dti2ck_di" bpmnElement="EndEvent_1dti2ck">
+        <dc:Bounds x="1175" y="664" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1165" y="710" width="55" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="ServiceTask_1ctgkdr_di" bpmnElement="ServiceTask_1ctgkdr">
+        <dc:Bounds x="362" y="328" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="ServiceTask_1yxbpam_di" bpmnElement="ServiceTask_1yxbpam">
+        <dc:Bounds x="623" y="328" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="ServiceTask_08v7u37_di" bpmnElement="ServiceTask_08v7u37">
+        <dc:Bounds x="1144" y="328" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_0pjz61x_di" bpmnElement="SequenceFlow_0pjz61x">
+        <di:waypoint x="462" y="368" />
+        <di:waypoint x="511" y="368" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_1l25gc1_di" bpmnElement="SequenceFlow_1l25gc1">
+        <di:waypoint x="1194" y="408" />
+        <di:waypoint x="1193" y="664" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_0i5fvla_di" bpmnElement="SequenceFlow_0i5fvla">
+        <di:waypoint x="723" y="368" />
+        <di:waypoint x="765" y="368" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_15uy8fb_di" bpmnElement="SequenceFlow_15uy8fb">
+        <di:waypoint x="307" y="368" />
+        <di:waypoint x="362" y="368" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="ExclusiveGateway_0o6rnht_di" bpmnElement="ExclusiveGateway_0o6rnht" isMarkerVisible="true">
+        <dc:Bounds x="765.30081300813" y="343" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="751" y="298" width="78" height="40" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="ExclusiveGateway_1kfvlhx_di" bpmnElement="ExclusiveGateway_1kfvlhx" isMarkerVisible="true">
+        <dc:Bounds x="511.4982578397213" y="343" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="507" y="304" width="58" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_009qp02_di" bpmnElement="SequenceFlow_009qp02">
+        <di:waypoint x="561" y="368" />
+        <di:waypoint x="623" y="368" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="583" y="350" width="18" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_1fkr2s1_di" bpmnElement="SequenceFlow_1fkr2s1">
+        <di:waypoint x="536" y="393" />
+        <di:waypoint x="536" y="682" />
+        <di:waypoint x="1175" y="682" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="543" y="492" width="15" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_1dkp04u_di" bpmnElement="SequenceFlow_1dkp04u">
+        <di:waypoint x="790" y="393" />
+        <di:waypoint x="790" y="585" />
+        <di:waypoint x="992" y="585" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="882" y="493" width="15" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_1xc5jqx_di" bpmnElement="SequenceFlow_1xc5jqx">
+        <di:waypoint x="1092" y="617" />
+        <di:waypoint x="1178" y="672" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="ServiceTask_1f5y71g_di" bpmnElement="Task_1qnusb7">
+        <dc:Bounds x="992" y="546" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_1xiru5u_di" bpmnElement="SequenceFlow_1xiru5u">
+        <di:waypoint x="815" y="368" />
+        <di:waypoint x="1144" y="368" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="971" y="350" width="18" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>

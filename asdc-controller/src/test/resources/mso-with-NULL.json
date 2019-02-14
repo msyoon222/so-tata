@@ -1,0 +1,21 @@
+{
+  "asdc-connections":{
+    "asdc-controller1":{
+        "user": "User",
+        "consumerGroup": "NULL",
+        "consumerId": "consumerId",
+        "environmentName": "environmentName",
+        "asdcAddress": "hostname",
+        "password": "1c551b8b5ab91fcd5a0907b11c304199",
+       "watchDogTimeout": "300",
+       "messageBusAddress": [
+         "localhost",
+         "localhost",
+         "localhost"
+       ],
+        "pollingInterval":10,
+        "pollingTimeout":30
+        
+    }
+  }
+}

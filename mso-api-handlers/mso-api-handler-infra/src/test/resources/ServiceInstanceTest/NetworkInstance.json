@@ -1,0 +1,19 @@
+{
+   "requestDetails":{
+      "modelInfo":{
+         "modelType":"network",
+         "modelCustomizationId": "3bdbb104-476c-483e-9f8b-c095b3d308ac"
+      },
+      "requestInfo":{
+         "source":"VID",
+         "requestorId":"xxxxxx"
+      },
+      "requestParameters":{
+         "testApi":"VNF_API"
+      },
+      "cloudConfiguration":{
+         "lcpCloudRegionId":"cloudRegionId",
+         "tenantId":"821553e85fd2461ab205bcd45cc3eeda"
+      }
+   }
+}
